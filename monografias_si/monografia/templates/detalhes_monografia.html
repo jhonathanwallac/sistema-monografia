@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ monografia.titulo }} - Detalhes da Monografia{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Início</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'busca_simples' %}">Monografias</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ monografia.titulo|truncatechars:40 }}</li>
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">{{ monografia.titulo }}</h4>
+        {% if perms.monografia.change_monografia %}
+        <div>
+            <a href="{% url 'editar_monografia' pk=monografia.pk %}" class="btn btn-sm btn-light">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            {% if perms.monografia.delete_monografia %}
+            <a href="{% url 'excluir_monografia' pk=monografia.pk %}" class="btn btn-sm btn-danger ml-2">
+                <i class="fas fa-trash-alt"></i> Excluir
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h5 class="border-bottom pb-2 mb-3">Informações da Monografia</h5>
+
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Autor:</div>
+                    <div class="col-md-9">{{ monografia.autor }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Orientador:</div>
+                    <div class="col-md-9">{{ monografia.orientador }}</div>
+                </div>
+
+                {% if monografia.coorientador %}
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Coorientador:</div>
+                    <div class="col-md-9">{{ monografia.coorientador }}</div>
+                </div>
+                {% endif %}
+
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Data da Defesa:</div>
+                    <div class="col-md-9">{{ monografia.data_defesa|date:"d/m/Y" }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Palavras-chave:</div>
+                    <div class="col-md-9">
+                        {% for palavra in monografia.palavras_chave.all %}
+                            <span class="badge badge-info">{{ palavra.palavra }}</span>
+                        {% empty %}
+                            <em>Nenhuma palavra-chave cadastrada</em>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3 font-weight-bold">Cadastrado em:</div>
+                    <div class="col-md-9">{{ monografia.data_cadastro|date:"d/m/Y H:i" }}</div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-3 font-weight-bold">Última atualização:</div>
+                    <div class="col-md-9">{{ monografia.data_atualizacao|date:"d/m/Y H:i" }}</div>
+                </div>
+
+                <h5 class="border-bottom pb-2 mb-3">Resumo</h5>
+                <p>{{ monografia.resumo|linebreaks }}</p>
+
+                <h5 class="border-bottom pb-2 mb-3">Abstract</h5>
+                <p>{{ monografia.abstract|linebreaks }}</p>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-file-pdf mr-2"></i> Documento Principal</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>
+                            <i class="fas fa-file-pdf fa-5x text-danger mb-3"></i>
+                        </p>
+                        <h6>{{ monografia.titulo }}</h6>
+                        <p class="text-muted">Formato PDF</p>
+                        <a href="{% url 'baixar_arquivo' tipo='monografia' pk=monografia.pk %}" class="btn btn-primary">
+                            <i class="fas fa-download mr-2"></i> Download
+                        </a>
+                    </div>
+                </div>
+
+                {% if arquivos_adicionais %}
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-paperclip mr-2"></i> Arquivos Adicionais</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for arquivo in arquivos_adicionais %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file mr-2"></i>
+                                <a href="{% url 'baixar_arquivo' tipo='adicional' pk=arquivo.pk %}">
+                                    {{ arquivo.descricao }}
+                                </a>
+                                <small class="d-block text-muted">Adicionado em: {{ arquivo.data_upload|date:"d/m/Y" }}</small>
+                            </div>
+                            {% if perms.monografia.delete_arquivoadicional %}
+                            <a href="{% url 'excluir_arquivo' pk=arquivo.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if perms.monografia.add_arquivoadicional %}
+                    <div class="card-footer text-center">
+                        <a href="{% url 'adicionar_arquivo' monografia_pk=monografia.pk %}" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-plus-circle mr-1"></i> Adicionar Arquivo
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% elif perms.monografia.add_arquivoadicional %}
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-paperclip mr-2"></i> Arquivos Adicionais</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="text-muted">Nenhum arquivo adicional disponível</p>
+                        <a href="{% url 'adicionar_arquivo' monografia_pk=monografia.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-plus-circle mr-1"></i> Adicionar Arquivo
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if perms.monografia.view_historicorevisao %}
+                <div class="card mt-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-history mr-2"></i> Histórico</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <a href="{% url 'historico_revisoes' monografia_pk=monografia.pk %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-clock mr-1"></i> Ver Histórico de Revisões
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

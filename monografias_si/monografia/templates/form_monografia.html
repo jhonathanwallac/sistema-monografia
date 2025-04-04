@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ titulo }} - Sistema de Monografias SI{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Início</a></li>
+        {% if monografia %}
+            <li class="breadcrumb-item"><a href="{% url 'detalhes_monografia' pk=monografia.pk %}">{{ monografia.titulo|truncatechars:40 }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar</li>
+        {% else %}
+            <li class="breadcrumb-item active" aria-current="page">Nova Monografia</li>
+        {% endif %}
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">{{ titulo }}</h4>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="border-bottom pb-2 mb-3">Dados Básicos</h5>
+
+                    {{ form.titulo|as_crispy_field }}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.autor|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.data_defesa|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.orientador|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.coorientador|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    {{ form.palavras_chave_texto|as_crispy_field }}
+
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Resumo e Abstract</h5>
+
+                    {{ form.resumo|as_crispy_field }}
+                    {{ form.abstract|as_crispy_field }}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-file-upload mr-2"></i> Arquivo PDF</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if form.instance.arquivo_pdf %}
+                                <div class="alert alert-info">
+                                    <p><i class="fas fa-file-pdf mr-2"></i> Arquivo atual: <strong>{{ form.instance.arquivo_pdf.name|cut:"monografias/"|cut:form.instance.autor|cut:form.instance.titulo|cut:"/" }}</strong></p>
+                                    <p class="mb-0"><small>Envie um novo arquivo apenas se desejar substituir o atual.</small></p>
+                                </div>
+                            {% endif %}
+
+                            {{ form.arquivo_pdf|as_crispy_field }}
+
+                            <div class="alert alert-warning mt-3">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    Apenas arquivos PDF são permitidos. Tamanho máximo: 20MB.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-info-circle mr-2"></i> Informações</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="pl-4">
+                                <li>Todos os campos com * são obrigatórios.</li>
+                                <li>Palavras-chave devem ser separadas por vírgula.</li>
+                                <li>Para cadastrar um novo orientador, utilize o painel administrativo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top mt-4 pt-4 text-right">
+                {% if monografia %}
+                    <a href="{% url 'detalhes_monografia' pk=monografia.pk %}" class="btn btn-secondary">Cancelar</a>
+                {% else %}
+                    <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary ml-2">
+                    <i class="fas fa-save mr-1"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Adicionar validações adicionais via JavaScript se necessário
+    $(document).ready(function() {
+        // Exemplo: validar formato de data
+        $('#id_data_defesa').on('change', function() {
+            // Implementar validação personalizada se necessário
+        });
+    });
+</script>
+{% endblock %}
