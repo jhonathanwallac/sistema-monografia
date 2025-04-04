@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Exclusão - Sistema de Monografias SI{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Confirmar Exclusão</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+                    </div>
+
+                    <h5 class="card-title mb-4">Você está prestes a excluir a seguinte monografia:</h5>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Título:</dt>
+                        <dd class="col-sm-9">{{ monografia.titulo }}</dd>
+
+                        <dt class="col-sm-3">Autor:</dt>
+                        <dd class="col-sm-9">{{ monografia.autor }}</dd>
+
+                        <dt class="col-sm-3">Orientador:</dt>
+                        <dd class="col-sm-9">{{ monografia.orientador.nome }}</dd>
+
+                        <dt class="col-sm-3">Data de Defesa:</dt>
+                        <dd class="col-sm-9">{{ monografia.data_defesa|date:"d/m/Y" }}</dd>
+                    </dl>
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="text-center">
+                            <input type="hidden" name="confirmar" value="sim">
+                            <button type="submit" class="btn btn-danger mr-2">
+                                <i class="fas fa-trash-alt"></i> Sim, Excluir
+                            </button>
+                            <a href="{% url 'detalhes_monografia' monografia.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

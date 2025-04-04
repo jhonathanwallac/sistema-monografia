@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados da Busca - Sistema de Monografias SI{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Resultados da Busca</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{% url 'busca_simples' %}" class="form-inline">
+                <div class="input-group flex-grow-1">
+                    <input type="text" name="termo" class="form-control" value="{{ termo }}" placeholder="Digite sua busca...">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <a href="{% url 'busca_avancada' %}" class="btn btn-outline-secondary ml-2">Busca Avançada</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>{{ total_resultados }} resultado(s) encontrado(s)</span>
+                <a href="{% url 'index' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            {% if page_obj %}
+                <div class="list-group list-group-flush">
+                    {% for monografia in page_obj %}
+                        <a href="{% url 'detalhes_monografia' monografia.pk %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ monografia.titulo }}</h5>
+                                <small>{{ monografia.data_defesa|date:"d/m/Y" }}</small>
+                            </div>
+                            <p class="mb-1">Autor: {{ monografia.autor }}</p>
+                            <small>Orientador: {{ monografia.orientador.nome }}</small>
+                            {% if monografia.coorientador %}
+                                <small class="ml-3">Coorientador: {{ monografia.coorientador.nome }}</small>
+                            {% endif %}
+                        </a>
+                    {% empty %}
+                        <div class="list-group-item text-center py-4">
+                            <h5 class="text-muted">Nenhum resultado encontrado</h5>
+                            <p>Tente outros termos de busca ou use a busca avançada.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Navegação de página">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?termo={{ termo }}&page=1">&laquo; Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?termo={{ termo }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">&laquo; Primeira</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Anterior</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?termo={{ termo }}&page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?termo={{ termo }}&page={{ page_obj.next_page_number }}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?termo={{ termo }}&page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Próxima</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Última &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
