@@ -14,12 +14,6 @@
             <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
 
-                {% if arquivo_atual %}
-                <div class="mb-3">
-                    <p><strong>Arquivo atual:</strong> <a href="{{ arquivo_atual.arquivo.url }}" target="_blank">{{ arquivo_atual.nome }}</a></p>
-                </div>
-                {% endif %}
-
                 <div class="row g-3">
                     {% for field in form %}
                     <div class="col-md-{% if field.name in 'resumo,abstract' %}12{% else %}6{% endif %}">
@@ -43,6 +37,13 @@
                         {% endif %}
                     </div>
                     {% endfor %}
+
+                    {% if arquivo_atual %}
+                    <div class="mb-3">
+                        <p><strong>Arquivo atual:</strong> <a href="{{ arquivo_atual.arquivo.url }}" target="_blank">{{ arquivo_atual.nome }}</a></p>
+                    </div>
+                    {% endif %}
+                    
                     <div class="col-12 mt-4 d-flex justify-content-between">
                         <a href="{% url 'listar_monografias' %}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Voltar para Listagem
