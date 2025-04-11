@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Monografia{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Cadastrar Nova Monografia</h1>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Dados da Monografia</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="row g-3">
+                    {% for field in form %}
+                    <div class="col-md-{% if field.name in 'resumo,abstract' %}12{% else %}6{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div class="col-12 mt-4 d-flex justify-content-between">
+                        <a href="{% url 'listar_monografias' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Voltar para Listagem
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i>Salvar Monografia
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

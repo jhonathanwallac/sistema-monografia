@@ -1,0 +1,36 @@
+# Ambientes virtuais
+venv/
+env/
+.env/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Banco de dados
+*.sqlite3
+db.sqlite3
+
+# Logs
+*.log
+
+# Arquivos de mídia e estáticos em produção
+/media/
+/static/
+/staticfiles/
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos de ambiente
+.env
+.env.local
+
+# Arquivos de distribuição
+dist/
+build/
+*.egg-info/

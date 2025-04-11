@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Histórico de Revisões</h2>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Informações da Monografia</h5>
+            <p><strong>Título:</strong> {{ monografia.titulo }}</p>
+            <p><strong>Autor:</strong> {{ monografia.autor }}</p>
+            <p><strong>Data de Defesa:</strong> {{ monografia.data_defesa }}</p>
+            <a href="{% url 'monografia_detalhe' monografia.pk %}" class="btn btn-primary">Voltar para Detalhes</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Histórico de Alterações</h5>
+
+            {% if historico %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Campo</th>
+                                <th>Valor Antigo</th>
+                                <th>Valor Novo</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entrada in historico %}
+                            <tr>
+                                <td>{{ entrada.data_alteracao }}</td>
+                                <td>{{ entrada.campo_alterado }}</td>
+                                <td>{{ entrada.valor_antigo }}</td>
+                                <td>{{ entrada.valor_novo }}</td>
+                                <td>{{ entrada.usuario|default:"Anônimo" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>Nenhuma alteração registrada.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

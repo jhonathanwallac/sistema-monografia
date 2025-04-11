@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h2><i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão</h2>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Você está prestes a excluir a seguinte monografia:</h5>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>{{ monografia.titulo }}</h3>
+                    <p><strong>Autor:</strong> {{ monografia.autor }}</p>
+                    <p><strong>Orientador:</strong> {{ monografia.orientador }}</p>
+                    <p><strong>Data de Defesa:</strong> {{ monografia.data_defesa|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-circle"></i> 
+                <strong>Atenção:</strong> Esta ação não pode ser desfeita. Todos os dados relacionados serão perdidos.
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'listar_monografias' %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirmar Exclusão
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
